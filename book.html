@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .mbody {
+            width: 98%;
+            height: 96%;
+            margin: 0 auto;
+            border: 2px solid gray;
+            border-radius: 15px;
+            box-shadow: 10px 10px 5px #888888;
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        input {
+            width: 80px;
+            height: 35px;
+            background: #c90c18;
+            color: #ffffff;
+            border-radius: 5px;
+            border: 2px solid #db5e66;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        input:hover {
+            background-color: #02bbff;
+            border: 1px solid orange;
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mbody" id="mbody">
+    </div>
+
+</body>
+<script>
+    var userArray = new Array(3);
+    var bookArray = new Array(14);
+    var isRegist = false;
+    var isLogin = false;
+    var mbody = document.getElementById("mbody");
+
+    userArray[0] = new Object();
+    userArray[0].userName = "Admin";
+    userArray[0].password = "Admin";
+    userArray[0].isAdmin = true;
+    userArray[1] = new Object();
+    userArray[1].userName = "user";
+    userArray[1].password = "user";
+    userArray[1].isAdmin = false;
+    userArray[2] = new Object();
+    userArray[2].userName = "TY";
+    userArray[2].password = "TY";
+    userArray[2].isAdmin = true;
+
+    for (var i = 0; i < bookArray.length; i++) {
+        bookArray[i] = new Object();
+        bookArray[i].bookId = i + 1;
+        bookArray[i].bookName = "书" + bookArray[i].bookId;
+        bookArray[i].bookAuthor = "LJ";
+        bookArray[i].bookTime = "2020-4-25";
+        bookArray[i].bookNum = 10;
+    }
+    bookArray[13].bookName = "三国演义";
+    bookArray[13].bookAuthor = "罗贯中";
+    bookArray[13].bookTime = "2020-4-25";
+    bookArray[13].bookNum = 10;
+
+    function creatTable(isAdmin) {
+        var str;
+        var tStr = "";
+        var adminStr = "<input type='button'  value='录入新书' οnclick='adminAdd()'" +
+            "style='border: 2px solid red; font-size:18px; cursor: pointer; " +
+            "color:white; background-color:hotpink; display:block; margin: 0 auto; " +
+            "margin-top: 60px; height:40px; width:100px;'>";
+        if (isAdmin) {
+            tStr += "<th>借书</th>" +
+                "<th>录入</th>" +
+                "<th>删除</th>" +
+                "</tr>";
+            tStr += adminStr;
+        } else {
+            tStr += "<th>借书</th>" +
+                "</tr>";
+        }
+        for (var i = 0; i < bookArray.length; i++) {
+            if (isAdmin) {
+                tStr += "<tr  height='35' align='center'>" +
+                    "<td>" + bookArray[i].bookId + "</td>" +
+                    "<td>" + bookArray[i].bookName + "</td>" +
+                    "<td>" + bookArray[i].bookAuthor + "</td>" +
+                    "<td>" + bookArray[i].bookTime + "</td>" +
+                    "<td>" + bookArray[i].bookNum + "</td>" +
+                    "<td><input type='button' value='借书' οnclick='borrow(" + i + "," + isAdmin + ")'/>" + "</td>" +
+                    "<td><input type='button' value='录入' οnclick='add(\"" + i + "\")'/>" + "</td>" +
+                    "<td><input type='button' value='删除' οnclick='del(\"" + i + "\")'/>" + "</td>" +
+                    "</tr>"
+            } else {
+                tStr += "<tr  height='35' align='center'>" +
+                    "<td>" + bookArray[i].bookId + "</td>" +
+                    "<td>" + bookArray[i].bookName + "</td>" +
+                    "<td>" + bookArray[i].bookAuthor + "</td>" +
+                    "<td>" + bookArray[i].bookTime + "</td>" +
+                    "<td>" + bookArray[i].bookNum + "</td>" +
+                    "<td><input type='button' value='借书' οnclick='borrow(" + i + "," + isAdmin + ")'/>" + "</td>" +
+                    "</tr>"
+            }
+        }
+        str = "<table border='0px' width='100%' style='margin: 30px auto'>" +
+            "<tr height='45'>" +
+            "<th> 编号 </th>" +
+            "<th> 书名 </th>" +
+            "<th> 作者 </th>" +
+            "<th>发布日期</th>" +
+            "<th>库存数量</th>" +
+            tStr +
+            "</table>";
+        return str;
+    }
+
+    function add(i) {
+        bookArray[i].bookNum++;
+        mbody.innerHTML = creatTable(true);
+    }
+
+    function del(i) {
+        bookArray.splice(i, 1);
+        mbody.innerHTML = creatTable(true);
+    }
+
+    function regAlog(isregist, islogin) {
+        if (isregist) {
+            var regist = new Object();
+            var rname = prompt("请输入用户名:");
+            for (var rg = 0; rg < userArray.length; rg++) {
+                if (userArray[rg].userName == rname) {
+                    rname = prompt("该用户已存在！:");
+                    rg = -1;
+                }
+            }
+            regist.userName = rname;
+            regist.password = prompt("请输入密码:");
+            regist.isAdmin = confirm("是否需要管理员权限？");
+            userArray.push(regist);
+            alert("注册成功！");
+            islogin = true;
+            if (islogin) {
+                mbody.innerHTML = creatTable(regist.isAdmin);
+            }
+        } else {
+            var lname = prompt("请输入用户名:");
+            var j = 0;
+            var k = 0;
+            var lg;
+            for (lg = 0; lg < userArray.length; lg++) {
+                if (userArray[lg].userName == lname) {
+                    var passw = prompt("请输入密码:");
+                    if (passw == userArray[lg].password) {
+                        alert("登陆成功!");
+                        islogin = true;
+                        break;
+                    } else {
+                        for (k = 0; k < 2 && passw != userArray[lg].password; k++) {
+                            passw = prompt("密码错误!请重新输入密码:");
+                        }
+                        if (k >= 2) {
+                            alert("超过次数，请重新登陆！");
+                            break;
+                        } else if (passw == userArray[lg].password) {
+                            alert("登陆成功!");
+                            islogin = true;
+                            break;
+                        }
+                    }
+                } else if (lg == userArray.length - 1) {
+                    lname = prompt("用户名错误，请重新输入:");
+                    lg = -1;
+                    if (j++ > 3) {
+                        alert("超过次数，请重新登陆！");
+                        break;
+                    }
+                }
+            }
+            if (islogin) {
+                mbody.innerHTML = creatTable(userArray[lg].isAdmin);
+            }
+        }
+    }
+
+    isRegist = window.confirm("请选择是否注册");
+    regAlog(isRegist, isLogin);
+    console.log(userArray);
+</script>
+
+</html>
